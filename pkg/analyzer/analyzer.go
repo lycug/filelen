@@ -35,6 +35,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	return nil, nil
 }
 
+// Newrun 提供给 golangci-lint 集成时调用
 func Newrun(pass *analysis.Pass, maxLineNum int) (interface{}, error) {
 	if maxLineNum == 0 {
 		maxLineNum = MaxLines
