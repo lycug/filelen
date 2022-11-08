@@ -34,3 +34,24 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	}
 	return nil, nil
 }
+
+func Newrun(pass *analysis.Pass, maxLineNum int) (interface{}, error) {
+	if maxLineNum == 0 {
+		maxLineNum = MaxLines
+	}
+
+	for _, file := range pass.Files {
+		fs := pass.Fset.File(file.Pos())
+		lines := fs.LineCount()
+		if lines > maxLineNum {
+			pass.Report(analysis.Diagnostic{
+				Pos:            file.Pos(),
+				End:            0,
+				Category:       "file lines length out of limit",
+				Message:        fmt.Sprintf("file has %d lines which is out of limit %d lines", lines, maxLineNum),
+				SuggestedFixes: nil,
+			})
+		}
+	}
+	return nil, nil
+}

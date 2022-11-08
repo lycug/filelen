@@ -3,6 +3,7 @@ package analyzer
 // Tests for linters.
 
 import (
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -12,6 +13,16 @@ import (
 	"golang.org/x/tools/go/analysis/analysistest"
 )
 
+func TestAll(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get wd: %s", err)
+	}
+
+	testdata := filepath.Join(filepath.Dir(filepath.Dir(wd)), "testdata")
+	analysistest.Run(t, testdata, Analyzer, "test")
+}
+
 type linterSuite struct {
 	suite.Suite
 }
@@ -19,7 +30,7 @@ type linterSuite struct {
 func (suite *linterSuite) TestContextLinter() {
 	analysistest.Run(
 		suite.T(), TestdataDir(),
-		Analyzer, "testlintdata/todo")
+		Analyzer, "/test/")
 }
 
 func TestLinterSuite(t *testing.T) {
@@ -31,5 +42,5 @@ func TestdataDir() string {
 	if !ok {
 		panic("unable to get current test filename")
 	}
-	return filepath.Join(filepath.Dir(testFilename), "testdata")
+	return filepath.Join(filepath.Dir(testFilename), "../testdata/src")
 }
